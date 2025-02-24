@@ -240,9 +240,9 @@ var _ = Describe("dbconn/dbconn tests", func() {
 	})
 	Describe("DBConn.Get", func() {
 		It("executes a GET outside of a transaction", func() {
-			two_col_single_row := sqlmock.NewRows([]string{"schemaname", "tablename"}).
+			twoColSingleRow := sqlmock.NewRows([]string{"schemaname", "tablename"}).
 				AddRow("schema1", "table1")
-			mock.ExpectQuery("SELECT (.*)").WillReturnRows(two_col_single_row)
+			mock.ExpectQuery("SELECT (.*)").WillReturnRows(twoColSingleRow)
 
 			testRecord := struct {
 				Schemaname string
@@ -258,9 +258,9 @@ var _ = Describe("dbconn/dbconn tests", func() {
 		It("executes a GET with argument outside of a transaction", func() {
 			arg1 := "table1"
 			arg2 := "table2"
-			two_col_single_row := sqlmock.NewRows([]string{"schemaname", "tablename"}).
+			twoColSingleRow := sqlmock.NewRows([]string{"schemaname", "tablename"}).
 				AddRow("schema1", "table1")
-			mock.ExpectQuery("SELECT (.*)").WithArgs(arg1, arg2).WillReturnRows(two_col_single_row)
+			mock.ExpectQuery("SELECT (.*)").WithArgs(arg1, arg2).WillReturnRows(twoColSingleRow)
 
 			testRecord := struct {
 				Schemaname string
@@ -273,10 +273,10 @@ var _ = Describe("dbconn/dbconn tests", func() {
 			Expect(testRecord.Tablename).To(Equal("table1"))
 		})
 		It("executes a GET in a transaction", func() {
-			two_col_single_row := sqlmock.NewRows([]string{"schemaname", "tablename"}).
+			twoColSingleRow := sqlmock.NewRows([]string{"schemaname", "tablename"}).
 				AddRow("schema1", "table1")
 			ExpectBegin(mock)
-			mock.ExpectQuery("SELECT (.*)").WillReturnRows(two_col_single_row)
+			mock.ExpectQuery("SELECT (.*)").WillReturnRows(twoColSingleRow)
 			mock.ExpectCommit()
 
 			testRecord := struct {
@@ -294,10 +294,10 @@ var _ = Describe("dbconn/dbconn tests", func() {
 	})
 	Describe("DBConn.Select", func() {
 		It("executes a SELECT outside of a transaction", func() {
-			two_col_rows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
+			twoColRows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
 				AddRow("schema1", "table1").
 				AddRow("schema2", "table2")
-			mock.ExpectQuery("SELECT (.*)").WillReturnRows(two_col_rows)
+			mock.ExpectQuery("SELECT (.*)").WillReturnRows(twoColRows)
 
 			testSlice := make([]struct {
 				Schemaname string
@@ -316,10 +316,10 @@ var _ = Describe("dbconn/dbconn tests", func() {
 		It("executes a SELECT with argument outside of a transaction", func() {
 			arg1 := "table1"
 			arg2 := "table2"
-			two_col_rows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
+			twoColRows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
 				AddRow("schema1", "table1").
 				AddRow("schema2", "table2")
-			mock.ExpectQuery("SELECT (.*)").WithArgs(arg1, arg2).WillReturnRows(two_col_rows)
+			mock.ExpectQuery("SELECT (.*)").WithArgs(arg1, arg2).WillReturnRows(twoColRows)
 
 			testSlice := make([]struct {
 				Schemaname string
@@ -336,11 +336,11 @@ var _ = Describe("dbconn/dbconn tests", func() {
 			Expect(testSlice[1].Tablename).To(Equal("table2"))
 		})
 		It("executes a SELECT in a transaction", func() {
-			two_col_rows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
+			twoColRows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
 				AddRow("schema1", "table1").
 				AddRow("schema2", "table2")
 			ExpectBegin(mock)
-			mock.ExpectQuery("SELECT (.*)").WillReturnRows(two_col_rows)
+			mock.ExpectQuery("SELECT (.*)").WillReturnRows(twoColRows)
 			mock.ExpectCommit()
 
 			testSlice := make([]struct {
@@ -362,10 +362,10 @@ var _ = Describe("dbconn/dbconn tests", func() {
 	})
 	Describe("DBConn.SelectContext", func() {
 		It("executes a SELECT outside of a transaction", func() {
-			two_col_rows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
+			twoColRows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
 				AddRow("schema1", "table1").
 				AddRow("schema2", "table2")
-			mock.ExpectQuery("SELECT (.*)").WillReturnRows(two_col_rows)
+			mock.ExpectQuery("SELECT (.*)").WillReturnRows(twoColRows)
 
 			testSlice := make([]struct {
 				Schemaname string
@@ -385,10 +385,10 @@ var _ = Describe("dbconn/dbconn tests", func() {
 			Expect(testSlice[1].Tablename).To(Equal("table2"))
 		})
 		It("errors out when the context is cancelled", func() {
-			two_col_rows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
+			twoColRows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
 				AddRow("schema1", "table1").
 				AddRow("schema2", "table2")
-			mock.ExpectQuery("SELECT (.*)").WillReturnRows(two_col_rows)
+			mock.ExpectQuery("SELECT (.*)").WillReturnRows(twoColRows)
 
 			testSlice := make([]struct {
 				Schemaname string
@@ -406,10 +406,10 @@ var _ = Describe("dbconn/dbconn tests", func() {
 	})
 	Describe("DBConn.QueryContext", func() {
 		It("executes a QUERY and returns the correct rows", func() {
-			two_col_rows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
+			twoColRows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
 				AddRow("schema1", "table1").
 				AddRow("schema2", "table2")
-			mock.ExpectQuery("SELECT (.*)").WillReturnRows(two_col_rows)
+			mock.ExpectQuery("SELECT (.*)").WillReturnRows(twoColRows)
 
 			type testSlice struct {
 				Schemaname string
@@ -440,10 +440,10 @@ var _ = Describe("dbconn/dbconn tests", func() {
 			Expect(result[1].Tablename).To(Equal("table2"))
 		})
 		It("errors out when the context is cancelled", func() {
-			two_col_rows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
+			twoColRows := sqlmock.NewRows([]string{"schemaname", "tablename"}).
 				AddRow("schema1", "table1").
 				AddRow("schema2", "table2")
-			mock.ExpectQuery("SELECT (.*)").WillReturnRows(two_col_rows)
+			mock.ExpectQuery("SELECT (.*)").WillReturnRows(twoColRows)
 
 			ctx, cancel := context.WithCancel(context.Background())
 			cancel()

@@ -144,11 +144,11 @@ func (m *Matcher) Match(actual interface{}) (success bool, err error) {
 	return len(m.mismatches) == 0, nil
 }
 
-func (m *Matcher) FailureMessage(actual interface{}) (message string) {
+func (m *Matcher) FailureMessage(_ interface{}) (message string) {
 	return "Expected structs to match but:\n" + strings.Join(m.mismatches, "\n")
 }
 
-func (m *Matcher) NegatedFailureMessage(actual interface{}) (message string) {
+func (m *Matcher) NegatedFailureMessage(_ interface{}) (message string) {
 	return "Expected structs not to match, but they did"
 }
 

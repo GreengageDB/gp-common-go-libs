@@ -283,16 +283,42 @@ var _ = Describe("structmatcher.StructMatcher", func() {
 				"        privateStructField: {Field1: 0, Field2: \"\"},\n" +
 				"    }"))
 		})
+		It("detects differences only in privateStructField", func() {
+			struct1 := OpaqueStruct{
+				privateStructField: SimpleStruct{Field1: 1, Field2: "2"},
+			}
+			struct2 := OpaqueStruct{
+				privateStructField: SimpleStruct{Field1: 10, Field2: "2"},
+			}
+			messages := InterceptGomegaFailures(func() {
+				Expect(struct2).To(structmatcher.MatchStruct(struct1))
+			})
+			Expect(messages).To(HaveLen(1))
+			Expect(messages[0]).To(Equal("Expected structs to match but:\n" +
+				"Mismatch on unexported field within top level struct\n" +
+				"Expected\n" +
+				"    <structmatcher_test.OpaqueStruct>: {\n" +
+				"        privateField: \"\",\n" +
+				"        privateStructField: {Field1: 10, Field2: \"2\"},\n" +
+				"    }\n" +
+				"to equal\n" +
+				"    <structmatcher_test.OpaqueStruct>: {\n" +
+				"        privateField: \"\",\n" +
+				"        privateStructField: {Field1: 1, Field2: \"2\"},\n" +
+				"    }"))
+		})
 		It("works when public fields are also unequal", func() {
 			struct1 := SemiOpaqueStruct{
-				PublicField:  SimpleStruct{Field1: 1, Field2: "2"},
-				privateField: "foo",
-				PublicField2: SimpleStruct{Field1: 2, Field2: "2"},
+				PublicField:        SimpleStruct{Field1: 1, Field2: "2"},
+				privateField:       "foo",
+				privateStructField: SimpleStruct{Field1: 3, Field2: "2"},
+				PublicField2:       SimpleStruct{Field1: 2, Field2: "2"},
 			}
 			struct2 := SemiOpaqueStruct{
-				PublicField:  SimpleStruct{Field1: 10, Field2: "2"},
-				privateField: "bar",
-				PublicField2: SimpleStruct{Field1: 20, Field2: "2"},
+				PublicField:        SimpleStruct{Field1: 10, Field2: "2"},
+				privateField:       "bar",
+				privateStructField: SimpleStruct{Field1: 30, Field2: "2"},
+				PublicField2:       SimpleStruct{Field1: 20, Field2: "2"},
 			}
 			messages := InterceptGomegaFailures(func() {
 				Expect(struct2).To(structmatcher.MatchStruct(struct1))
@@ -314,14 +340,14 @@ var _ = Describe("structmatcher.StructMatcher", func() {
 				"    <structmatcher_test.SemiOpaqueStruct>: {\n" +
 				"        PublicField: {Field1: 10, Field2: \"2\"},\n" +
 				"        privateField: \"bar\",\n" +
-				"        privateStructField: {Field1: 0, Field2: \"\"},\n" +
+				"        privateStructField: {Field1: 30, Field2: \"2\"},\n" +
 				"        PublicField2: {Field1: 20, Field2: \"2\"},\n" +
 				"    }\n" +
 				"to equal\n" +
 				"    <structmatcher_test.SemiOpaqueStruct>: {\n" +
 				"        PublicField: {Field1: 1, Field2: \"2\"},\n" +
 				"        privateField: \"foo\",\n" +
-				"        privateStructField: {Field1: 0, Field2: \"\"},\n" +
+				"        privateStructField: {Field1: 3, Field2: \"2\"},\n" +
 				"        PublicField2: {Field1: 2, Field2: \"2\"},\n" +
 				"    }"))
 		})

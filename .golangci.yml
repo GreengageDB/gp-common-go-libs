@@ -3,9 +3,9 @@ linters:
   # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
   disable-all: true
   enable:
-    - golint
-    - vet
-    - varcheck
+    - revive
+    - govet
+    - unused
     - unparam
     - errcheck
 
@@ -19,11 +19,6 @@ issues:
     - "should not use dot imports"
 
   exclude-rules:
-    - path: _test\.go
-      text: "don't use underscores in Go names"
-      linters:
-        - golint
-
     - path: _test\.go
       linters:
         - errcheck

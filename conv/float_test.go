@@ -171,13 +171,13 @@ func BenchmarkFFormatFloat_NaN(b *testing.B) {
  */
 func BenchmarkFFloat64ToBytes_Long(b *testing.B) {
 	var buf = [39]byte{}
-	var a float64 = -654234748649.9999999999
+	var a = -654234748649.9999999999
 	for n := 0; n < b.N; n++ {
 		_ = Float64ToBytes(a, 9, &buf)
 	}
 }
 func BenchmarkFFormatFloat_Long(b *testing.B) {
-	var a float64 = -654234748649.9999999999
+	var a = -654234748649.9999999999
 	for n := 0; n < b.N; n++ {
 		_ = strconv.FormatFloat(a, 'f', 9, 64)
 	}
@@ -190,13 +190,13 @@ func BenchmarkFFormatFloat_Long(b *testing.B) {
  */
 func BenchmarkFFloat64ToBytes_Exceed(b *testing.B) {
 	var buf = [39]byte{}
-	var a float64 = math.MinInt64 - 123456.78
+	var a = math.MinInt64 - 123456.78
 	for n := 0; n < b.N; n++ {
 		_ = Float64ToBytes(a, 2, &buf)
 	}
 }
 func BenchmarkFFormatFloat_Exceed(b *testing.B) {
-	var a float64 = math.MinInt64 - 123456.78
+	var a = math.MinInt64 - 123456.78
 	for n := 0; n < b.N; n++ {
 		_ = strconv.FormatFloat(a, 'f', 2, 64)
 	}

@@ -125,6 +125,7 @@ const (
 	INCLUDE_MIRRORS     Scope = 1 << 3
 )
 
+//nolint:unused
 func scopeIsSegments(scope Scope) bool {
 	return scope&ON_HOSTS == ON_SEGMENTS
 }
@@ -137,10 +138,12 @@ func scopeExcludesCoordinator(scope Scope) bool {
 	return scope&INCLUDE_COORDINATOR == EXCLUDE_COORDINATOR
 }
 
+//nolint:unused
 func scopeIncludesCoordinator(scope Scope) bool {
 	return scope&INCLUDE_COORDINATOR == INCLUDE_COORDINATOR
 }
 
+//nolint:unused
 func scopeIsRemote(scope Scope) bool {
 	return scope&ON_LOCAL == ON_REMOTE
 }
@@ -153,6 +156,7 @@ func scopeExcludesMirrors(scope Scope) bool {
 	return scope&INCLUDE_MIRRORS == EXCLUDE_MIRRORS
 }
 
+//nolint:unused
 func scopeIncludesMirrors(scope Scope) bool {
 	return scope&INCLUDE_MIRRORS == INCLUDE_MIRRORS
 }
@@ -373,7 +377,7 @@ func (executor *GPDBExecutor) ExecuteClusterCommand(scope Scope, commandList []S
  *    - e.g. running multiple scps on coordinator to push a file to all segments
  */
 func (cluster *Cluster) GenerateAndExecuteCommand(verboseMsg string, scope Scope, generator interface{}) *RemoteOutput {
-	gplog.Verbose(verboseMsg)
+	gplog.Verbose("%s", verboseMsg)
 	commandList := cluster.GenerateSSHCommandList(scope, generator)
 	return cluster.ExecuteClusterCommand(scope, commandList)
 }
@@ -397,7 +401,7 @@ func (cluster *Cluster) CheckClusterError(remoteOutput *RemoteOutput, finalErrMs
 	}
 
 	if len(noFatal) == 1 && noFatal[0] == true {
-		gplog.Error(finalErrMsg)
+		gplog.Error("%s", finalErrMsg)
 	} else {
 		LogFatalClusterError(finalErrMsg, remoteOutput.Scope, remoteOutput.NumErrors)
 	}
@@ -417,6 +421,7 @@ func LogFatalClusterError(errMessage string, scope Scope, numErrors int) {
 	if numErrors != 1 {
 		segMsg += "s"
 	}
+	//revive:disable-next-line error-strings
 	gplog.Fatal(errors.Errorf("%s %d %s. See %s for a complete list of errors.", errMessage, numErrors, segMsg, gplog.GetLogFilePath()), "")
 }
 

@@ -169,20 +169,20 @@ func BenchmarkUInt8AppendInt(b *testing.B) {
  */
 func BenchmarkUInt8ToByte_Zero(b *testing.B) {
 	var buff = [3]byte{}
-	var a uint8 = 0
+	var a uint8
 	for n := 0; n < b.N; n++ {
 		UInt8ToBytes(a, &buff)
 	}
 }
 func BenchmarkUInt8Itoa_Zero(b *testing.B) {
-	var a uint8 = 0
+	var a uint8
 	for n := 0; n < b.N; n++ {
 		strconv.Itoa(int(a))
 	}
 }
 func BenchmarkUInt8AppendInt_Zero(b *testing.B) {
 	var buff []byte
-	var a uint8 = 0
+	var a uint8
 	for n := 0; n < b.N; n++ {
 		strconv.AppendUint(buff, uint64(a), 10)
 	}
@@ -250,20 +250,20 @@ func BenchmarkUInt16AppendInt(b *testing.B) {
  */
 func BenchmarkUInt16ToByte_Zero(b *testing.B) {
 	var buff = [5]byte{}
-	var a uint16 = 0
+	var a uint16
 	for n := 0; n < b.N; n++ {
 		UInt16ToBytes(a, &buff)
 	}
 }
 func BenchmarkUInt16Itoa_Zero(b *testing.B) {
-	var a uint16 = 0
+	var a uint16
 	for n := 0; n < b.N; n++ {
 		strconv.Itoa(int(a))
 	}
 }
 func BenchmarkUInt16AppendInt_Zero(b *testing.B) {
 	var buff []byte
-	var a uint16 = 0
+	var a uint16
 	for n := 0; n < b.N; n++ {
 		strconv.AppendUint(buff, uint64(a), 10)
 	}
@@ -331,20 +331,20 @@ func BenchmarkUInt32AppendInt(b *testing.B) {
  */
 func BenchmarkUInt32ToByte_Zero(b *testing.B) {
 	var buff = [10]byte{}
-	var a uint32 = 0
+	var a uint32
 	for n := 0; n < b.N; n++ {
 		UInt32ToBytes(a, &buff)
 	}
 }
 func BenchmarkUInt32Itoa_Zero(b *testing.B) {
-	var a uint32 = 0
+	var a uint32
 	for n := 0; n < b.N; n++ {
 		strconv.Itoa(int(a))
 	}
 }
 func BenchmarkUInt32AppendInt_Zero(b *testing.B) {
 	var buff []byte
-	var a uint32 = 0
+	var a uint32
 	for n := 0; n < b.N; n++ {
 		strconv.AppendUint(buff, uint64(a), 10)
 	}
@@ -412,20 +412,20 @@ func BenchmarkUInt64AppendInt(b *testing.B) {
  */
 func BenchmarkUInt64ToByte_Zero(b *testing.B) {
 	var buff = [20]byte{}
-	var a uint64 = 0
+	var a uint64
 	for n := 0; n < b.N; n++ {
 		UInt64ToBytes(a, &buff)
 	}
 }
 func BenchmarkUInt64Itoa_Zero(b *testing.B) {
-	var a uint64 = 0
+	var a uint64
 	for n := 0; n < b.N; n++ {
 		strconv.FormatUint(a, 10)
 	}
 }
 func BenchmarkUInt64AppendInt_Zero(b *testing.B) {
 	var buff []byte
-	var a uint64 = 0
+	var a uint64
 	for n := 0; n < b.N; n++ {
 		strconv.AppendUint(buff, a, 10)
 	}
