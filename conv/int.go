@@ -38,11 +38,10 @@ func i8Dig(n int8, buf *[4]byte) []byte {
 			return digits1[n]
 		} else if n < 100 {
 			return digits2[n]
-		} else {
-			n = n - 100
-			buf[1], buf[2], buf[3] = '1', digits2[n][0], digits2[n][1]
-			return buf[1:]
 		}
+		n = n - 100
+		buf[1], buf[2], buf[3] = '1', digits2[n][0], digits2[n][1]
+		return buf[1:]
 	}
 
 	if n > -10 {

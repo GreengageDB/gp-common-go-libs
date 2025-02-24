@@ -19,7 +19,7 @@ type TestDriver struct {
 	CallNumber   int
 }
 
-func (driver *TestDriver) Connect(driverName string, dataSourceName string) (*sqlx.DB, error) {
+func (driver *TestDriver) Connect(_ /* driverName */ string, _ /* dataSourceName */ string) (*sqlx.DB, error) {
 	if driver.ErrsToReturn != nil && driver.CallNumber < len(driver.ErrsToReturn) {
 		// Return the errors in the order specified until we run out of specified errors, then return normally
 		err := driver.ErrsToReturn[driver.CallNumber]
@@ -95,7 +95,7 @@ func (executor *TestExecutor) ExecuteLocalCommand(commandStr string) (string, er
 	return executor.LocalOutput, nil
 }
 
-func (executor *TestExecutor) ExecuteClusterCommand(scope cluster.Scope, commandList []cluster.ShellCommand) *cluster.RemoteOutput {
+func (executor *TestExecutor) ExecuteClusterCommand(_ cluster.Scope, commandList []cluster.ShellCommand) *cluster.RemoteOutput {
 	executor.NumExecutions++
 	executor.NumClusterExecutions++
 	executor.ClusterCommands = append(executor.ClusterCommands, commandList)

@@ -105,7 +105,7 @@ func AssertQueryRuns(connection *dbconn.DBConn, query string) {
  */
 func MockFileContents(contents string) {
 	r, w, _ := os.Pipe()
-	operating.System.OpenFileRead = func(name string, flag int, perm os.FileMode) (operating.ReadCloserAt, error) { return r, nil }
+	operating.System.OpenFileRead = func(_ string, _ int, _ os.FileMode) (operating.ReadCloserAt, error) { return r, nil }
 	_, _ = w.Write([]byte(contents))
 	_ = w.Close()
 }

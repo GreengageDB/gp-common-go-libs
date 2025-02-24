@@ -103,10 +103,9 @@ func f64Dig(n float64, prec int, buf *[39]byte) []byte {
 		if ed == 21 {
 			buf[ed] = digits[is]
 			break
-		} else {
-			buf[ed], buf[ed-1] = digits2[is][1], digits2[is][0]
-			ed -= 2
 		}
+		buf[ed], buf[ed-1] = digits2[is][1], digits2[is][0]
+		ed -= 2
 	}
 
 	return buf[pos : 21+prec]

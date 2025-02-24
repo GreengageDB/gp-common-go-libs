@@ -541,18 +541,18 @@ var _ = Describe("cluster/cluster tests", func() {
 				FailedCommands: []*cluster.ShellCommand{&failedCmd},
 			}
 		})
-		DescribeTable("CheckClusterError", func(scope cluster.Scope, includeCoordinator bool, perSegment bool, remote bool) {
+		DescribeTable("CheckClusterError", func(scope cluster.Scope, perSegment bool, remote bool) {
 			remoteOutput.Scope = scope
 			remoteOutput.Commands[0].Scope = scope
 			remoteOutput.FailedCommands[0].Scope = scope
 			errStr := "1 segment"
 			debugStr := "segment 1 on host remotehost1"
 			var generatorFunc interface{}
-			generatorFunc = func(contentID int) string { return "Error received" }
+			generatorFunc = func(_ /* contentID */ int) string { return "Error received" }
 			if !perSegment {
 				errStr = "1 host"
 				debugStr = "host remotehost1"
-				generatorFunc = func(host string) string { return "Error received" }
+				generatorFunc = func(_ /* host */ string) string { return "Error received" }
 			}
 			if !remote {
 				errStr = "coordinator for " + errStr
@@ -562,14 +562,14 @@ var _ = Describe("cluster/cluster tests", func() {
 			defer Expect(logfile).To(gbytes.Say(fmt.Sprintf(`\[ERROR\]:-Error received on %s with error command error: exit status 1`, debugStr)))
 			testCluster.CheckClusterError(remoteOutput, "Got an error", generatorFunc)
 		},
-			Entry("prints error messages for a per-segment command, including coordinator", cluster.ON_SEGMENTS|cluster.INCLUDE_COORDINATOR, true, true, true),
-			Entry("prints error messages for a per-segment command, excluding coordinator", cluster.ON_SEGMENTS, false, true, true),
-			Entry("prints error messages for a per-host command, including the coordinator host", cluster.ON_HOSTS|cluster.INCLUDE_COORDINATOR, true, false, true),
-			Entry("prints error messages for a per-host command, excluding the coordinator host", cluster.ON_HOSTS, false, false, true),
-			Entry("prints error messages for commands executed on coordinator to segments, including coordinator", cluster.ON_SEGMENTS|cluster.INCLUDE_COORDINATOR|cluster.ON_LOCAL, true, true, false),
-			Entry("prints error messages for commands executed on coordinator to segments, excluding coordinator", cluster.ON_SEGMENTS|cluster.ON_LOCAL, false, true, false),
-			Entry("prints error messages for commands executed on coordinator to hosts, including coordinator", cluster.ON_HOSTS|cluster.INCLUDE_COORDINATOR|cluster.ON_LOCAL, true, false, false),
-			Entry("prints error messages for commands executed on coordinator to hosts, excluding coordinator", cluster.ON_HOSTS|cluster.ON_LOCAL, false, false, false),
+			Entry("prints error messages for a per-segment command, including coordinator", cluster.ON_SEGMENTS|cluster.INCLUDE_COORDINATOR, true, true),
+			Entry("prints error messages for a per-segment command, excluding coordinator", cluster.ON_SEGMENTS, true, true),
+			Entry("prints error messages for a per-host command, including the coordinator host", cluster.ON_HOSTS|cluster.INCLUDE_COORDINATOR, false, true),
+			Entry("prints error messages for a per-host command, excluding the coordinator host", cluster.ON_HOSTS, false, true),
+			Entry("prints error messages for commands executed on coordinator to segments, including coordinator", cluster.ON_SEGMENTS|cluster.INCLUDE_COORDINATOR|cluster.ON_LOCAL, true, false),
+			Entry("prints error messages for commands executed on coordinator to segments, excluding coordinator", cluster.ON_SEGMENTS|cluster.ON_LOCAL, true, false),
+			Entry("prints error messages for commands executed on coordinator to hosts, including coordinator", cluster.ON_HOSTS|cluster.INCLUDE_COORDINATOR|cluster.ON_LOCAL, false, false),
+			Entry("prints error messages for commands executed on coordinator to hosts, excluding coordinator", cluster.ON_HOSTS|cluster.ON_LOCAL, false, false),
 		)
 	})
 	Describe("LogFatalClusterError", func() {

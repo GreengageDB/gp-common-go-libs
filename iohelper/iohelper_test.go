@@ -35,13 +35,13 @@ var _ = Describe("operating/io tests", func() {
 	Describe("File reading and writing functions", func() {
 		Describe("OpenFileForReading", func() {
 			It("creates or opens the file for reading", func() {
-				operating.System.OpenFileRead = func(name string, flag int, perm os.FileMode) (operating.ReadCloserAt, error) { return os.Stdin, nil }
+				operating.System.OpenFileRead = func(_ string, _ int, _ os.FileMode) (operating.ReadCloserAt, error) { return os.Stdin, nil }
 				fileHandle, err := iohelper.OpenFileForReading("filename")
 				Expect(err).ToNot(HaveOccurred())
 				Expect(fileHandle).To(Equal(os.Stdin))
 			})
 			It("returns an error if one is generated", func() {
-				operating.System.OpenFileRead = func(name string, flag int, perm os.FileMode) (operating.ReadCloserAt, error) {
+				operating.System.OpenFileRead = func(_ string, _ int, _ os.FileMode) (operating.ReadCloserAt, error) {
 					return nil, errors.New("Permission denied")
 				}
 				_, err := iohelper.OpenFileForReading("filename")
@@ -50,12 +50,12 @@ var _ = Describe("operating/io tests", func() {
 		})
 		Describe("MustOpenFileForReading", func() {
 			It("creates or opens the file for reading", func() {
-				operating.System.OpenFileRead = func(name string, flag int, perm os.FileMode) (operating.ReadCloserAt, error) { return os.Stdin, nil }
+				operating.System.OpenFileRead = func(_ string, _ int, _ os.FileMode) (operating.ReadCloserAt, error) { return os.Stdin, nil }
 				fileHandle := iohelper.MustOpenFileForReading("filename")
 				Expect(fileHandle).To(Equal(os.Stdin))
 			})
 			It("panics on error", func() {
-				operating.System.OpenFileRead = func(name string, flag int, perm os.FileMode) (operating.ReadCloserAt, error) {
+				operating.System.OpenFileRead = func(_ string, _ int, _ os.FileMode) (operating.ReadCloserAt, error) {
 					return nil, errors.New("Permission denied")
 				}
 				defer testhelper.ShouldPanicWithMessage(errRead.Error())
@@ -65,7 +65,7 @@ var _ = Describe("operating/io tests", func() {
 		Describe("OpenFileForWriting", func() {
 			It("creates or opens the file for writing, and truncates any existing content", func() {
 				var passedFlags int
-				operating.System.OpenFileWrite = func(name string, flag int, perm os.FileMode) (io.WriteCloser, error) {
+				operating.System.OpenFileWrite = func(_ string, flag int, _ os.FileMode) (io.WriteCloser, error) {
 					passedFlags = flag
 					return os.Stdout, nil
 				}
@@ -75,7 +75,7 @@ var _ = Describe("operating/io tests", func() {
 				Expect(passedFlags).To(Equal(os.O_CREATE | os.O_WRONLY | os.O_TRUNC))
 			})
 			It("returns an error if one is generated", func() {
-				operating.System.OpenFileWrite = func(name string, flag int, perm os.FileMode) (io.WriteCloser, error) {
+				operating.System.OpenFileWrite = func(_ string, _ int, _ os.FileMode) (io.WriteCloser, error) {
 					return nil, errors.New("Permission denied")
 				}
 				_, err := iohelper.OpenFileForWriting("filename")
@@ -84,12 +84,12 @@ var _ = Describe("operating/io tests", func() {
 		})
 		Describe("MustOpenFileForWriting", func() {
 			It("creates or opens the file for writing", func() {
-				operating.System.OpenFileWrite = func(name string, flag int, perm os.FileMode) (io.WriteCloser, error) { return os.Stdout, nil }
+				operating.System.OpenFileWrite = func(_ string, _ int, _ os.FileMode) (io.WriteCloser, error) { return os.Stdout, nil }
 				fileHandle := iohelper.MustOpenFileForWriting("filename")
 				Expect(fileHandle).To(Equal(os.Stdout))
 			})
 			It("panics on error", func() {
-				operating.System.OpenFileWrite = func(name string, flag int, perm os.FileMode) (io.WriteCloser, error) {
+				operating.System.OpenFileWrite = func(_ string, _ int, _ os.FileMode) (io.WriteCloser, error) {
 					return nil, errors.New("Permission denied")
 				}
 				defer testhelper.ShouldPanicWithMessage(errWrite.Error())
@@ -99,7 +99,7 @@ var _ = Describe("operating/io tests", func() {
 		Describe("OpenFileForAppending", func() {
 			It("creates or opens the file for appending", func() {
 				var passedFlags int
-				operating.System.OpenFileWrite = func(name string, flag int, perm os.FileMode) (io.WriteCloser, error) {
+				operating.System.OpenFileWrite = func(_ string, flag int, _ os.FileMode) (io.WriteCloser, error) {
 					passedFlags = flag
 					return os.Stdout, nil
 				}
@@ -109,7 +109,7 @@ var _ = Describe("operating/io tests", func() {
 				Expect(passedFlags).To(Equal(os.O_APPEND | os.O_CREATE | os.O_WRONLY))
 			})
 			It("returns an error if one is generated", func() {
-				operating.System.OpenFileWrite = func(name string, flag int, perm os.FileMode) (io.WriteCloser, error) {
+				operating.System.OpenFileWrite = func(_ string, _ int, _ os.FileMode) (io.WriteCloser, error) {
 					return nil, errors.New("Permission denied")
 				}
 				_, err := iohelper.OpenFileForAppending("filename")
@@ -118,12 +118,12 @@ var _ = Describe("operating/io tests", func() {
 		})
 		Describe("MustOpenFileForAppending", func() {
 			It("creates or opens the file for writing", func() {
-				operating.System.OpenFileWrite = func(name string, flag int, perm os.FileMode) (io.WriteCloser, error) { return os.Stdout, nil }
+				operating.System.OpenFileWrite = func(_ string, _ int, _ os.FileMode) (io.WriteCloser, error) { return os.Stdout, nil }
 				fileHandle := iohelper.MustOpenFileForAppending("filename")
 				Expect(fileHandle).To(Equal(os.Stdout))
 			})
 			It("panics on error", func() {
-				operating.System.OpenFileWrite = func(name string, flag int, perm os.FileMode) (io.WriteCloser, error) {
+				operating.System.OpenFileWrite = func(_ string, _ int, _ os.FileMode) (io.WriteCloser, error) {
 					return nil, errors.New("Permission denied")
 				}
 				defer testhelper.ShouldPanicWithMessage(errAppend.Error())
@@ -133,34 +133,34 @@ var _ = Describe("operating/io tests", func() {
 	})
 	Describe("FileExistsAndIsReadable", func() {
 		It("returns true if the file both exists and is readable", func() {
-			operating.System.Stat = func(name string) (os.FileInfo, error) {
+			operating.System.Stat = func(_ string) (os.FileInfo, error) {
 				return nil, nil
 			}
-			operating.System.OpenFileRead = func(name string, flag int, perm os.FileMode) (operating.ReadCloserAt, error) {
+			operating.System.OpenFileRead = func(_ string, _ int, _ os.FileMode) (operating.ReadCloserAt, error) {
 				return &os.File{}, nil
 			}
 			check := iohelper.FileExistsAndIsReadable("filename")
 			Expect(check).To(BeTrue())
 		})
 		It("returns false if the file does not exist", func() {
-			operating.System.Stat = func(name string) (os.FileInfo, error) {
+			operating.System.Stat = func(_ string) (os.FileInfo, error) {
 				return nil, os.ErrNotExist
 			}
 			check := iohelper.FileExistsAndIsReadable("filename")
 			Expect(check).To(BeFalse())
 		})
 		It("returns false if there is an error accessing the file", func() {
-			operating.System.Stat = func(name string) (os.FileInfo, error) {
+			operating.System.Stat = func(_ string) (os.FileInfo, error) {
 				return nil, os.ErrPermission
 			}
 			check := iohelper.FileExistsAndIsReadable("filename")
 			Expect(check).To(BeFalse())
 		})
 		It("returns false if there is an error opening the file", func() {
-			operating.System.Stat = func(name string) (os.FileInfo, error) {
+			operating.System.Stat = func(_ string) (os.FileInfo, error) {
 				return nil, nil
 			}
-			operating.System.OpenFileRead = func(name string, flag int, perm os.FileMode) (operating.ReadCloserAt, error) {
+			operating.System.OpenFileRead = func(_ string, _ int, _ os.FileMode) (operating.ReadCloserAt, error) {
 				return &os.File{}, &os.PathError{}
 			}
 			check := iohelper.FileExistsAndIsReadable("filename")
@@ -186,7 +186,7 @@ public."bar%baz"`
 				Expect(contents).To(Equal([]string{}))
 			})
 			It("returns an error if there is an error reading the file", func() {
-				operating.System.OpenFileRead = func(name string, flag int, perm os.FileMode) (operating.ReadCloserAt, error) {
+				operating.System.OpenFileRead = func(_ string, _ int, _ os.FileMode) (operating.ReadCloserAt, error) {
 					return nil, errors.New("Permission denied")
 				}
 				contents, err := iohelper.ReadLinesFromFile("/tmp/table_file")
@@ -194,7 +194,7 @@ public."bar%baz"`
 				Expect(contents).To(BeNil())
 			})
 			It("returns an error if the file cannot be closed", func() {
-				operating.System.OpenFileRead = func(name string, flag int, perm os.FileMode) (operating.ReadCloserAt, error) {
+				operating.System.OpenFileRead = func(_ string, _ int, _ os.FileMode) (operating.ReadCloserAt, error) {
 					myCloser := FailsClosing{}
 					return myCloser, nil
 				}
@@ -217,7 +217,7 @@ public."bar%baz"`
 				Expect(contents).To(Equal([]string{}))
 			})
 			It("panics if there is an error reading the file", func() {
-				operating.System.OpenFileRead = func(name string, flag int, perm os.FileMode) (operating.ReadCloserAt, error) {
+				operating.System.OpenFileRead = func(_ string, _ int, _ os.FileMode) (operating.ReadCloserAt, error) {
 					return nil, errors.New("Permission denied")
 				}
 				defer testhelper.ShouldPanicWithMessage(errRead.Error())
@@ -229,10 +229,10 @@ public."bar%baz"`
 
 type FailsClosing struct{}
 
-func (fc FailsClosing) Read(p []byte) (n int, err error) {
+func (fc FailsClosing) Read(_ []byte) (n int, err error) {
 	return 1, nil
 }
-func (fc FailsClosing) ReadAt(p []byte, off int64) (n int, err error) {
+func (fc FailsClosing) ReadAt(_ []byte, _ int64) (n int, err error) {
 	return 0, nil
 }
 func (fc FailsClosing) Close() error {

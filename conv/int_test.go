@@ -199,20 +199,20 @@ func BenchmarkInt8AppendInt(b *testing.B) {
  */
 func BenchmarkInt8ToByte_Zero(b *testing.B) {
 	var buff = [4]byte{}
-	var a int8 = 0
+	var a int8
 	for n := 0; n < b.N; n++ {
 		Int8ToBytes(a, &buff)
 	}
 }
 func BenchmarkInt8Itoa_Zero(b *testing.B) {
-	var a int8 = 0
+	var a int8
 	for n := 0; n < b.N; n++ {
 		strconv.Itoa(int(a))
 	}
 }
 func BenchmarkInt8AppendInt_Zero(b *testing.B) {
 	var buff []byte
-	var a int8 = 0
+	var a int8
 	for n := 0; n < b.N; n++ {
 		strconv.AppendInt(buff, int64(a), 10)
 	}
@@ -280,20 +280,20 @@ func BenchmarkInt16AppendInt(b *testing.B) {
  */
 func BenchmarkInt16ToByte_Zero(b *testing.B) {
 	var buff = [6]byte{}
-	var a int16 = 0
+	var a int16
 	for n := 0; n < b.N; n++ {
 		Int16ToBytes(a, &buff)
 	}
 }
 func BenchmarkInt16Itoa_Zero(b *testing.B) {
-	var a int16 = 0
+	var a int16
 	for n := 0; n < b.N; n++ {
 		strconv.Itoa(int(a))
 	}
 }
 func BenchmarkInt16AppendInt_Zero(b *testing.B) {
 	var buff []byte
-	var a int16 = 0
+	var a int16
 	for n := 0; n < b.N; n++ {
 		strconv.AppendInt(buff, int64(a), 10)
 	}
@@ -361,20 +361,20 @@ func BenchmarkInt32AppendInt(b *testing.B) {
  */
 func BenchmarkInt32ToByte_Zero(b *testing.B) {
 	var buff = [11]byte{}
-	var a int32 = 0
+	var a int32
 	for n := 0; n < b.N; n++ {
 		Int32ToBytes(a, &buff)
 	}
 }
 func BenchmarkInt32Itoa_Zero(b *testing.B) {
-	var a int32 = 0
+	var a int32
 	for n := 0; n < b.N; n++ {
 		strconv.Itoa(int(a))
 	}
 }
 func BenchmarkInt32AppendInt_Zero(b *testing.B) {
 	var buff []byte
-	var a int32 = 0
+	var a int32
 	for n := 0; n < b.N; n++ {
 		strconv.AppendInt(buff, int64(a), 10)
 	}
@@ -442,20 +442,20 @@ func BenchmarkInt64AppendInt(b *testing.B) {
  */
 func BenchmarkInt64ToByte_Zero(b *testing.B) {
 	var buff = [20]byte{}
-	var a int64 = 0
+	var a int64
 	for n := 0; n < b.N; n++ {
 		Int64ToBytes(a, &buff)
 	}
 }
 func BenchmarkInt64Itoa_Zero(b *testing.B) {
-	var a int64 = 0
+	var a int64
 	for n := 0; n < b.N; n++ {
 		strconv.FormatInt(a, 10)
 	}
 }
 func BenchmarkInt64AppendInt_Zero(b *testing.B) {
 	var buff []byte
-	var a int64 = 0
+	var a int64
 	for n := 0; n < b.N; n++ {
 		strconv.AppendInt(buff, int64(a), 10)
 	}
