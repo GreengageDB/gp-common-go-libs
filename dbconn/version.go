@@ -1,6 +1,7 @@
 package dbconn
 
 import (
+	"github.com/pkg/errors"
 	"regexp"
 	"strings"
 
@@ -31,17 +32,18 @@ func NewVersion(versionStr string) GPDBVersion {
 }
 
 func InitializeVersion(dbconn *DBConn) (dbversion GPDBVersion, err error) {
-	err = dbconn.Get(&dbversion, "SELECT pg_catalog.version() AS versionstring")
+	err = dbconn.Get(&dbversion, "select setting as versionstring from pg_settings where name = 'gp_server_version';")
 	if err != nil {
 		return
 	}
-	versionStart := strings.Index(dbversion.VersionString, "(Greenplum Database ") + len("(Greenplum Database ")
-	versionEnd := strings.Index(dbversion.VersionString, ")")
-	dbversion.VersionString = dbversion.VersionString[versionStart:versionEnd]
 
 	pattern := regexp.MustCompile(`\d+\.\d+\.\d+`)
-	threeDigitVersion := pattern.FindStringSubmatch(dbversion.VersionString)[0]
-	dbversion.SemVer, err = semver.Make(threeDigitVersion)
+	threeDigitVersion := pattern.FindStringSubmatch(dbversion.VersionString)
+	if threeDigitVersion == nil {
+		err = errors.New("'gp_server_version' does not contain three-digit number, unable to determine version")
+		return
+	}
+	dbversion.SemVer, err = semver.Make(threeDigitVersion[0])
 	return
 }
 

@@ -148,6 +148,13 @@ var _ = Describe("dbconn/dbconn tests", func() {
 			err := connection.Connect(1, true)
 			Expect(err.Error()).To(Equal(`Database "testdb" does not exist on testhost:5432, exiting`))
 		})
+		It("gets a wrong version", func() {
+			connection, mock = testhelper.CreateMockDBConn(nil)
+			testhelper.ExpectVersionQuery(mock, "abc")
+
+			err := connection.Connect(1, true)
+			Expect(err).To(HaveOccurred())
+		})
 	})
 	Describe("DBConn.Close", func() {
 		BeforeEach(func() {
