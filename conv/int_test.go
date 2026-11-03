@@ -98,22 +98,22 @@ var _ = Describe("Integer Conversion functions", func() {
 		})
 		It("random test int32", func() {
 			var n int32
-			var maxValue int32 = math.MinInt32
-			var minValue int32 = math.MaxInt32
+			var max int32 = math.MinInt32
+			var min int32 = math.MaxInt32
 			rand.Seed(time.Now().UnixNano())
 			for i := 0; i < 100000; i++ {
 				n = int32(rand.Intn(math.MaxInt32-math.MinInt32) + math.MinInt32)
 				Expect(Int32ToBytes(n, &b11)).To(Equal([]byte(strconv.Itoa(int(n)))))
-				if maxValue < n {
+				if max < n {
 					rand.Seed(time.Now().UnixNano())
-					maxValue = n
+					max = n
 				}
-				if minValue > n {
+				if min > n {
 					rand.Seed(time.Now().UnixNano())
-					minValue = n
+					min = n
 				}
 			}
-			fmt.Println("Random test for Int32ToBytes,", minValue, "to", maxValue)
+			fmt.Println("Random test for Int32ToBytes,", min, "to", max)
 		})
 	})
 	Context("Int64ToBytes", func() {
@@ -139,8 +139,8 @@ var _ = Describe("Integer Conversion functions", func() {
 		It("random test int64", func() {
 			var n int64
 			var r uint64
-			var maxValue int64 = math.MinInt64
-			var minValue int64 = math.MaxInt64
+			var max int64 = math.MinInt64
+			var min int64 = math.MaxInt64
 			rand.Seed(time.Now().UnixNano())
 			for i := 0; i < 1000000; i++ {
 				r = rand.Uint64()
@@ -150,16 +150,16 @@ var _ = Describe("Integer Conversion functions", func() {
 					n = int64(r) + math.MinInt64
 				}
 				Expect(Int64ToBytes(n, &b20)).To(Equal([]byte(fmt.Sprintf("%d", n))))
-				if maxValue < n {
+				if max < n {
 					rand.Seed(time.Now().UnixNano())
-					maxValue = n
+					max = n
 				}
-				if minValue > n {
+				if min > n {
 					rand.Seed(time.Now().UnixNano())
-					minValue = n
+					min = n
 				}
 			}
-			fmt.Println("Random test for Int64ToBytes,", minValue, "to", maxValue)
+			fmt.Println("Random test for Int64ToBytes,", min, "to", max)
 		})
 	})
 })
