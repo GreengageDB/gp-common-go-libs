@@ -22,7 +22,7 @@ goimports:
 	docker run --rm -i -v "${PWD}":/data -w /data unibeautify/goimports -w -l /data
 
 golangci-lint:
-	docker run --rm -v ${PWD}:/data -w /data golangci/golangci-lint:v2.15.0 golangci-lint run -v
+	docker run --rm -v ${PWD}:/data -w /data golangci/golangci-lint golangci-lint run -v
 
 gofmt:
 	docker run --rm -v ${PWD}:/data cytopia/gofmt --ci .
