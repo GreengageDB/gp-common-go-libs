@@ -1,24 +1,42 @@
+version: "2"
+
 linters:
-  # please, do not use `enable-all`: it's deprecated and will be removed soon.
-  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
-  disable-all: true
+  # Enable only the linters listed below.
+  default: none
   enable:
-    - revive
-    - govet
-    - unused
-    - unparam
     - errcheck
-
-issues:
-  # List of regexps of issue texts to exclude, empty list by default.
-  # But independently from this option we use default exclude patterns,
-  # it can be disabled by `exclude-use-default: false`. To list all
-  # excluded by default patterns execute `golangci-lint run --help`
-  exclude:
-    - "don't use ALL_CAPS in Go names; use CamelCase"
-    - "should not use dot imports"
-
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - errcheck
+    - govet
+    - revive
+    - unparam
+    - unused
+  settings:
+    revive:
+      # Configuring a rule below would otherwise replace the default rule set
+      # instead of extending it.
+      enable-default-rules: true
+      rules:
+        - name: dot-imports
+          # The test framework is meant to be dot imported. Dot imports of any
+          # other package are still reported, including in the test helpers of
+          # structmatcher and testhelper, which are not _test.go files.
+          arguments:
+            - allowedPackages:
+                - github.com/onsi/ginkgo/v2
+                - github.com/onsi/gomega
+  exclusions:
+    generated: lax
+    # The issues that golangci-lint v1 excluded by default.
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - path: _test\.go
+        linters:
+          - errcheck
+      # The external test package of conv dot imports the package it tests.
+      - path: ^conv/.+_test\.go$
+        text: should not use dot imports
+        linters:
+          - revive
