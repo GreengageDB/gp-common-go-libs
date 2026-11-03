@@ -40,7 +40,3 @@ linters:
         text: should not use dot imports
         linters:
           - revive
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
