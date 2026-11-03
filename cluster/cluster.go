@@ -112,6 +112,7 @@ type SegConfig struct {
 
 type Scope uint8
 
+//nolint:revive // The ALL_CAPS names are part of the public API of this package.
 const (
 	ON_SEGMENTS         Scope = 0
 	ON_HOSTS            Scope = 1
