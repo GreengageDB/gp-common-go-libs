@@ -80,22 +80,22 @@ var _ = Describe("Unsigned Integer Conversion functions", func() {
 		})
 		It("random test uint32", func() {
 			var n uint32
-			var max uint32 = 0
-			var min uint32 = math.MaxUint32
+			var maxValue uint32 = 0
+			var minValue uint32 = math.MaxUint32
 			rand.Seed(time.Now().UnixNano())
 			for i := 0; i < 100000; i++ {
 				n = rand.Uint32()
 				Expect(UInt32ToBytes(n, &b10)).To(Equal([]byte(strconv.Itoa(int(n)))))
-				if max < n {
+				if maxValue < n {
 					rand.Seed(time.Now().UnixNano())
-					max = n
+					maxValue = n
 				}
-				if min > n {
+				if minValue > n {
 					rand.Seed(time.Now().UnixNano())
-					min = n
+					minValue = n
 				}
 			}
-			fmt.Println("Random test for UInt32ToBytes,", min, "to", max)
+			fmt.Println("Random test for UInt32ToBytes,", minValue, "to", maxValue)
 		})
 	})
 	Context("UInt64ToBytes", func() {
@@ -114,22 +114,22 @@ var _ = Describe("Unsigned Integer Conversion functions", func() {
 		})
 		It("random test", func() {
 			var n uint64
-			var max uint64 = 0
-			var min uint64 = math.MaxUint64
+			var maxValue uint64 = 0
+			var minValue uint64 = math.MaxUint64
 			rand.Seed(time.Now().UnixNano())
 			for i := 0; i < 1000000; i++ {
 				n = rand.Uint64()
 				Expect(UInt64ToBytes(n, &b20)).To(Equal([]byte(fmt.Sprintf("%d", n))))
-				if max < n {
+				if maxValue < n {
 					rand.Seed(time.Now().UnixNano())
-					max = n
+					maxValue = n
 				}
-				if min > n {
+				if minValue > n {
 					rand.Seed(time.Now().UnixNano())
-					min = n
+					minValue = n
 				}
 			}
-			fmt.Println("Random test for UInt64ToBytes,", min, "to", max)
+			fmt.Println("Random test for UInt64ToBytes,", minValue, "to", maxValue)
 		})
 	})
 })

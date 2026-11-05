@@ -20,10 +20,18 @@ import (
 	 * but it had a bug with the way it handled certain encodings.
 	 * pgx seems to handle these encodings properly.
 	 */
-	_ "github.com/jackc/pgx/v4/stdlib"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 )
+
+/*
+ * DriverName is the database/sql driver registered by pgx/v5/stdlib. We use
+ * the version-qualified name rather than "pgx", because pgx/v5 registers
+ * "pgx" only if no other pgx major version has already registered it, and
+ * the connection string below relies on pgx/v5-only parameters.
+ */
+const DriverName = "pgx/v5"
 
 /*
  * While the sqlx.DB struct (and indirectly the sql.DB struct) maintains its own
@@ -207,12 +215,18 @@ func (dbconn *DBConn) Connect(numConns int, utilityMode ...bool) error {
 	}
 	// This string takes in the literal user/database names. They do not need
 	// to be escaped or quoted.
-	// By default pgx/v4 turns on automatic prepared statement caching. This
+	// By default pgx turns on automatic prepared statement caching. This
 	// causes an issue in GPDB4 where creating an object, deleting it, creating
 	// the same object again, then querying for the object in the same
 	// connection will generate a cache lookup failure. To disable pgx's
-	// automatic prepared statement cache we set statement_cache_capacity to 0.
-	connStr := fmt.Sprintf(`user='%s' dbname='%s' krbsrvname='%s' host=%s port=%d sslmode='%s' statement_cache_capacity=0`,
+	// automatic prepared statement and description caches we set
+	// statement_cache_capacity and description_cache_capacity to 0. pgx/v5
+	// rejects queries in its default cache_statement mode when the cache is
+	// disabled, so we also set default_query_exec_mode to describe_exec, which
+	// prepares an unnamed statement for each query, as pgx/v4 did without a
+	// cache. As with pgx/v4, Exec without arguments uses the simple protocol,
+	// so it can still run several statements at once.
+	connStr := fmt.Sprintf(`user='%s' dbname='%s' krbsrvname='%s' host=%s port=%d sslmode='%s' statement_cache_capacity=0 description_cache_capacity=0 default_query_exec_mode=describe_exec`,
 		user, dbname, krbsrvname, dbconn.Host, dbconn.Port, sslmode)
 
 	dbconn.ConnPool = make([]*sqlx.DB, numConns)
@@ -225,7 +239,7 @@ func (dbconn *DBConn) Connect(numConns int, utilityMode ...bool) error {
 		// we need to just try one first and see whether it works.
 		roleConnStr := connStr + " gp_role=utility"
 		sessionRoleConnStr := connStr + " gp_session_role=utility"
-		utilConn, err := dbconn.Driver.Connect("pgx", sessionRoleConnStr)
+		utilConn, err := dbconn.Driver.Connect(DriverName, sessionRoleConnStr)
 		if utilConn != nil {
 			utilConn.Close()
 		}
@@ -241,7 +255,7 @@ func (dbconn *DBConn) Connect(numConns int, utilityMode ...bool) error {
 	}
 
 	for i := 0; i < numConns; i++ {
-		conn, err := dbconn.Driver.Connect("pgx", connStr)
+		conn, err := dbconn.Driver.Connect(DriverName, connStr)
 		err = dbconn.handleConnectionError(err)
 		if err != nil {
 			return err

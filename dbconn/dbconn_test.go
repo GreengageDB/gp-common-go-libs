@@ -12,6 +12,7 @@ import (
 	"github.com/GreengageDB/gp-common-go-libs/dbconn"
 	"github.com/GreengageDB/gp-common-go-libs/operating"
 	"github.com/GreengageDB/gp-common-go-libs/testhelper"
+	"github.com/jackc/pgx/v5"
 	"github.com/jmoiron/sqlx"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -27,6 +28,19 @@ func ExpectBegin(mock sqlmock.Sqlmock) {
 	fakeResult := testhelper.TestResult{Rows: 0}
 	mock.ExpectBegin()
 	mock.ExpectExec("SET TRANSACTION(.*)").WillReturnResult(fakeResult)
+}
+
+// recordingDriver records the arguments that DBConn passes to the driver.
+type recordingDriver struct {
+	db             *sqlx.DB
+	driverName     string
+	dataSourceName string
+}
+
+func (driver *recordingDriver) Connect(driverName string, dataSourceName string) (*sqlx.DB, error) {
+	driver.driverName = driverName
+	driver.dataSourceName = dataSourceName
+	return driver.db, nil
 }
 
 func TestDBConn(t *testing.T) {
@@ -96,6 +110,27 @@ var _ = Describe("dbconn/dbconn tests", func() {
 			Expect(connection.NumConns).To(Equal(3))
 			Expect(len(connection.ConnPool)).To(Equal(3))
 			Expect(len(connection.Tx)).To(Equal(3))
+		})
+		It("connects with the pgx/v5 driver and a connection string that disables pgx caching", func() {
+			driver := &recordingDriver{db: connection.Driver.(*testhelper.TestDriver).DB}
+			connection.Driver = driver
+			connection.MustConnect(1)
+
+			Expect(driver.driverName).To(Equal("pgx/v5"))
+			config, err := pgx.ParseConfig(driver.dataSourceName)
+			Expect(err).ToNot(HaveOccurred())
+			// pgx/v5 rejects every query in the default cache_statement mode
+			// when the statement cache is disabled.
+			Expect(config.DefaultQueryExecMode).To(Equal(pgx.QueryExecModeDescribeExec))
+			Expect(config.StatementCacheCapacity).To(Equal(0))
+			Expect(config.DescriptionCacheCapacity).To(Equal(0))
+			// The pgx options must not reach the server as unknown GUCs.
+			Expect(config.RuntimeParams).ToNot(HaveKey("statement_cache_capacity"))
+			Expect(config.RuntimeParams).ToNot(HaveKey("description_cache_capacity"))
+			Expect(config.RuntimeParams).ToNot(HaveKey("default_query_exec_mode"))
+			Expect(config.Database).To(Equal("testdb"))
+			Expect(config.Host).To(Equal("testhost"))
+			Expect(config.Port).To(Equal(uint16(5432)))
 		})
 		It("does not connect if the database exists but the connection is refused", func() {
 			connection.Driver = &testhelper.TestDriver{ErrToReturn: fmt.Errorf("pq: connection refused"), DB: mockdb, User: "testrole"}
